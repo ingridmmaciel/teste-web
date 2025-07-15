@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGOC - Reporte de Ocorrências</title>
+    <title>GOL - SGOC - Reporte de Ocorrências</title>
     <style>
         /* CSS para deixar a página bonita */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f4f7f9;
+            background-color: #f0f2f5; /* Um cinza claro, suave */
             color: #333;
             margin: 0;
             padding: 20px;
@@ -20,8 +20,9 @@
             max-width: 800px;
         }
         h1, h2 {
-            color: #1a2c4e;
+            color: #FF7F00; /* Laranja GOL */
             text-align: center;
+            font-weight: bold; /* Títulos mais marcantes */
         }
         .form-container, .list-container {
             background-color: #ffffff;
@@ -34,6 +35,7 @@
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            color: #1a2c4e; /* Azul escuro para os rótulos */
         }
         input, select, textarea {
             width: 100%;
@@ -42,75 +44,84 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             box-sizing: border-box; /* Importante */
+            font-size: 16px; /* Tamanho de fonte para campos */
         }
         button {
             width: 100%;
             padding: 12px;
-            background-color: #007bff;
+            background-color: #FF7F00; /* Laranja GOL */
             color: white;
             border: none;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 18px; /* Botão maior */
+            font-weight: bold;
             cursor: pointer;
             transition: background-color 0.2s;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #E66A00; /* Laranja um pouco mais escuro ao passar o mouse */
         }
         #lista-ocorrencias .item {
             background-color: #f9f9f9;
             border: 1px solid #eee;
-            border-left: 5px solid #007bff;
+            border-left: 5px solid #FF7F00; /* Borda padrão laranja GOL */
             padding: 15px;
             margin-bottom: 10px;
             border-radius: 5px;
         }
-        #lista-ocorrencias .item.prioridade-Alta { border-left-color: #dc3545; }
-        #lista-ocorrencias .item.prioridade-Média { border-left-color: #ffc107; }
-        #lista-ocorrencias .item.prioridade-Baixa { border-left-color: #28a745; }
+        /* Cores de prioridade mantidas, pois são um padrão comum (vermelho, amarelo, verde) */
+        #lista-ocorrencias .item.prioridade-Alta { border-left-color: #dc3545; } /* Vermelho */
+        #lista-ocorrencias .item.prioridade-Média { border-left-color: #ffc107; } /* Amarelo */
+        #lista-ocorrencias .item.prioridade-Baixa { border-left-color: #28a745; } /* Verde */
         #lista-ocorrencias p { margin: 5px 0; }
+        .logo {
+            display: block;
+            margin: 0 auto 20px;
+            width: 150px; /* Ajuste o tamanho conforme necessário */
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>✈️ SGOC - Reporte de Ocorrências de Cabine</h1>
+        <h1>✈️ GOL - Sistema de Gestão de Ocorrências de Cabine</h1>
 
         <div class="form-container">
-            <h2>Nova Ocorrência</h2>
+            <h2>Registrar Nova Ocorrência</h2>
             <form id="form-ocorrencia">
-                <label for="categoria">Categoria:</label>
+                <label for="categoria">Categoria da Ocorrência:</label>
                 <select id="categoria" name="categoria">
                     <option>Assento</option>
-                    <option>Entretenimento de Bordo</option>
+                    <option>Sistema de Entretenimento (IFE)</option>
                     <option>Cozinha/Galley</option>
                     <option>Banheiro</option>
                     <option>Iluminação</option>
                     <option>Bagageiro Superior</option>
-                    <option>Outros</option>
+                    <option>Equipamento de Segurança</option>
+                    <option>Outros (Detalhar na descrição)</option>
                 </select>
 
-                <label for="localizacao">Localização (Ex: Poltrona 15C):</label>
-                <input type="text" id="localizacao" name="localizacao" required>
+                <label for="localizacao">Localização Específica (Ex: Poltrona 15C, Galley Traseira):</label>
+                <input type="text" id="localizacao" name="localizacao" placeholder="Ex: Poltrona 15C" required>
 
-                <label for="descricao">Descrição do Problema:</label>
-                <textarea id="descricao" name="descricao" rows="4" required></textarea>
+                <label for="descricao">Descreva o Problema Detalhadamente:</label>
+                <textarea id="descricao" name="descricao" rows="4" placeholder="Ex: A tela do entretenimento da poltrona 15C está com falha no toque." required></textarea>
 
-                <label for="prioridade">Prioridade:</label>
+                <label for="prioridade">Nível de Prioridade:</label>
                 <select id="prioridade" name="prioridade">
                     <option>Baixa</option>
                     <option selected>Média</option>
                     <option>Alta</option>
                 </select>
 
-                <button type="submit">Reportar Problema</button>
+                <button type="submit">Enviar Ocorrência</button>
             </form>
         </div>
 
         <div class="list-container">
-            <h2>Ocorrências Abertas (nesta sessão)</h2>
+            <h2>Ocorrências Registradas (Nesta Sessão)</h2>
             <div id="lista-ocorrencias">
-                <p>Nenhum problema reportado ainda.</p>
+                <p>Nenhuma ocorrência registrada ainda.</p>
             </div>
         </div>
     </div>
@@ -126,7 +137,7 @@
         function renderizarLista() {
             // Se a lista está vazia, mostra a mensagem padrão
             if (ocorrenciasSalvas.length === 0) {
-                lista.innerHTML = '<p>Nenhum problema reportado ainda.</p>';
+                lista.innerHTML = '<p>Nenhuma ocorrência registrada ainda.</p>';
                 return;
             }
             
