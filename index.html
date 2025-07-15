@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGOC - Reporte de Ocorrências</title>
+    <style>
+        /* CSS para deixar a página bonita */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f7f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+        h1, h2 {
+            color: #1a2c4e;
+            text-align: center;
+        }
+        .form-container, .list-container {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Importante */
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #lista-ocorrencias .item {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-left: 5px solid #007bff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        #lista-ocorrencias .item.prioridade-Alta { border-left-color: #dc3545; }
+        #lista-ocorrencias .item.prioridade-Média { border-left-color: #ffc107; }
+        #lista-ocorrencias .item.prioridade-Baixa { border-left-color: #28a745; }
+        #lista-ocorrencias p { margin: 5px 0; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>✈️ SGOC - Reporte de Ocorrências de Cabine</h1>
+
+        <div class="form-container">
+            <h2>Nova Ocorrência</h2>
+            <form id="form-ocorrencia">
+                <label for="categoria">Categoria:</label>
+                <select id="categoria" name="categoria">
+                    <option>Assento</option>
+                    <option>Entretenimento de Bordo</option>
+                    <option>Cozinha/Galley</option>
+                    <option>Banheiro</option>
+                    <option>Iluminação</option>
+                    <option>Bagageiro Superior</option>
+                    <option>Outros</option>
+                </select>
+
+                <label for="localizacao">Localização (Ex: Poltrona 15C):</label>
+                <input type="text" id="localizacao" name="localizacao" required>
+
+                <label for="descricao">Descrição do Problema:</label>
+                <textarea id="descricao" name="descricao" rows="4" required></textarea>
+
+                <label for="prioridade">Prioridade:</label>
+                <select id="prioridade" name="prioridade">
+                    <option>Baixa</option>
+                    <option selected>Média</option>
+                    <option>Alta</option>
+                </select>
+
+                <button type="submit">Reportar Problema</button>
+            </form>
+        </div>
+
+        <div class="list-container">
+            <h2>Ocorrências Abertas (nesta sessão)</h2>
+            <div id="lista-ocorrencias">
+                <p>Nenhum problema reportado ainda.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript para fazer tudo funcionar sem backend
+        const form = document.getElementById('form-ocorrencia');
+        const lista = document.getElementById('lista-ocorrencias');
+        
+        // Array para guardar as ocorrências na memória do navegador
+        let ocorrenciasSalvas = [];
+
+        function renderizarLista() {
+            // Se a lista está vazia, mostra a mensagem padrão
+            if (ocorrenciasSalvas.length === 0) {
+                lista.innerHTML = '<p>Nenhum problema reportado ainda.</p>';
+                return;
+            }
+            
+            // Limpa a lista antes de adicionar os itens
+            lista.innerHTML = '';
+            
+            // Cria um elemento HTML para cada ocorrência salva
+            ocorrenciasSalvas.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `item prioridade-${item.prioridade}`; // Adiciona classe para cor
+                itemDiv.innerHTML = `
+                    <p><strong>Local:</strong> ${item.localizacao}</p>
+                    <p><strong>Categoria:</strong> ${item.categoria}</p>
+                    <p><strong>Descrição:</strong> ${item.descricao}</p>
+                    <p><strong>Prioridade:</strong> ${item.prioridade}</p>
+                `;
+                lista.appendChild(itemDiv);
+            });
+        }
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede que a página recarregue
+            
+            // Pega os valores do formulário
+            const novaOcorrencia = {
+                categoria: form.categoria.value,
+                localizacao: form.localizacao.value,
+                descricao: form.descricao.value,
+                prioridade: form.prioridade.value
+            };
+            
+            // Adiciona a nova ocorrência ao nosso array
+            ocorrenciasSalvas.push(novaOcorrencia);
+            
+            // Limpa o formulário
+            form.reset();
+            form.categoria.focus();
+            
+            // Atualiza a lista na tela
+            renderizarLista();
+        });
+
+        // Renderiza a lista pela primeira vez (vazia)
+        renderizarLista();
+    </script>
+
+</body>
+</html>
